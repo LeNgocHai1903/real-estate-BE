@@ -152,9 +152,7 @@ const updateProduct = async (req, res, next) => {
     description,
     price,
     area,
-    status,
-    productType,
-    currentcy,
+    
   } = req.body;
   const productId = req.params.pid;
 
@@ -169,10 +167,7 @@ const updateProduct = async (req, res, next) => {
   product.title = title;
   product.description = description;
   product.price = price;
-  product.currentcy = currentcy;
   product.area = area;
-  product.status = status;
-  product.productType = productType;
 
   try {
     await product.save();
