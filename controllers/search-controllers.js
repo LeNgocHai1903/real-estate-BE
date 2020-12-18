@@ -21,7 +21,7 @@ const Search = async (req, res, next) => {
         (p) => p.address.district === pdistrict && p.address.city === pcity && p.productType === ptype
       )}
   } catch (error) {
-    const err = new HttpError("Fetching products faild!", 500);
+    const err = new HttpError("Tải dữ liệu sản phẩm thất bại", 500);
     return next(err);
   }
 

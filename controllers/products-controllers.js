@@ -12,7 +12,7 @@ const getProducts = async (req, res, next) => {
   try {
     product = await Product.find({});
   } catch (error) {
-    const err = new HttpError("Fetching products faild!", 500);
+    const err = new HttpError("Tải dữ liệu sản phẩm thất bại. Vui lòng thử lại sau", 500);
     return next(err);
   }
 
@@ -28,7 +28,7 @@ const getProductsByUserId = async (req, res, next) => {
     userWithProducts = await User.findById(userId).populate("products");
   } catch (err) {
     const error = new HttpError(
-      "Fetching places failed, please try again later.",
+      "Tải dữ liệu sản phẩm thất bại. Vui lòng thử lại sau",
       500
     );
     return next(error);
@@ -37,7 +37,7 @@ const getProductsByUserId = async (req, res, next) => {
   // if (!places || places.length === 0) {
   if (!userWithProducts || userWithProducts.products.length === 0) {
     return next(
-      new HttpError("Could not find products for the provided user id.", 404)
+      new HttpError("Không thể tìm thấy sản phẩm với người dùng này", 404)
     );
   }
 
@@ -59,7 +59,7 @@ const getProductById = async (req, res, next) => {
     product = await Product.findById(productId);
   } catch (err) {
     const error = new HttpError(
-      "Something went wrong, could not find a place.",
+      "Không thể tìm thấy sản phẩm",
       500
     );
     return next(error);
@@ -67,7 +67,7 @@ const getProductById = async (req, res, next) => {
 
   if (!product) {
     const error = new HttpError(
-      "Could not find place for the provided id.",
+      "Không thể kiếm thấy sản phẩm với thành viên này",
       404
     );
     return next(error);
@@ -80,7 +80,7 @@ const createProduct = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return next(
-      new HttpError("Invalid inputs passed, please check your data.", 422)
+      new HttpError("Dữ liệu đầu vào không hợp lệ. Vui lòng kiểm tra lại", 422)
     );
   }
 
@@ -116,12 +116,12 @@ const createProduct = async (req, res, next) => {
   try {
     user = await User.findById(creator);
   } catch (error) {
-    const err = new HttpError("Creating faild, Try again", 500);
+    const err = new HttpError("Tạo sản phẩm thất bại. Vui lòng thử lại", 500);
     return next(err);
   }
 
   if (!user) {
-    const err = new HttpError("Could not find user", 500);
+    const err = new HttpError("Không thể kiếm thấy thành viên này", 500);
     return next(err);
   }
 
@@ -134,7 +134,7 @@ const createProduct = async (req, res, next) => {
     await sess.commitTransaction();
   } catch (err) {
     console.log(err);
-    const error = new HttpError("Errorsss", 500);
+    const error = new HttpError("Lỗi", 500);
     return next(error);
   }
 
@@ -144,7 +144,7 @@ const createProduct = async (req, res, next) => {
 const updateProduct = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    throw new HttpError("Invalid inputs passed, please check your data.", 422);
+    throw new HttpError("Dữ liệu đầu vào không hợp lệ. Vui lòng kiểm tra lại", 422);
   }
 
   const {
@@ -160,7 +160,7 @@ const updateProduct = async (req, res, next) => {
   try {
     product = await Product.findById(productId);
   } catch (error) {
-    const err = new HttpError("Something went wrong!!", 500);
+    const err = new HttpError("Lỗi", 500);
     return next(err);
   }
 
@@ -172,7 +172,7 @@ const updateProduct = async (req, res, next) => {
   try {
     await product.save();
   } catch (error) {
-    const err = new HttpError("u could not update", 500);
+    const err = new HttpError("Bạn không thể cập nhật sản phẩm này", 500);
     return next(err);
   }
 
@@ -182,7 +182,7 @@ const updateProduct = async (req, res, next) => {
 const submit = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    throw new HttpError("Invalid inputs passed, please check your data.", 422);
+    throw new HttpError("Dữ liệu đầu vào không hợp lệ. Vui lòng kiểm tra lại", 422);
   }
 
   const { status } = req.body;
@@ -194,7 +194,7 @@ const submit = async (req, res, next) => {
     product = await Product.findById(productId);
     user = await User.findById(userId);
   } catch (error) {
-    const err = new HttpError("Something went wrong!!", 500);
+    const err = new HttpError("Lỗi", 500);
     return next(err);
   }
   product.status = status;
@@ -203,7 +203,7 @@ const submit = async (req, res, next) => {
   try {
     await product.save();
   } catch (error) {
-    const err = new HttpError("u could not update", 500);
+    const err = new HttpError("Bạn không thể cập nhật sản phẩm", 500);
     return next(err);
   }
 
@@ -213,7 +213,7 @@ const submit = async (req, res, next) => {
 const sell = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    throw new HttpError("Invalid inputs passed, please check your data.", 422);
+    throw new HttpError("Dữ liệu đầu vào không hợp lệ. Vui lòng kiểm tra lại", 422);
   }
 
   const { status } = req.body;
@@ -225,7 +225,7 @@ const sell = async (req, res, next) => {
     product = await Product.findById(productId);
     user = await User.findById(userId);
   } catch (error) {
-    const err = new HttpError("Something went wrong!!", 500);
+    const err = new HttpError("Lỗi", 500);
     return next(err);
   }
   product.status = status;
@@ -248,7 +248,7 @@ const sell = async (req, res, next) => {
     await sess.commitTransaction();
   } catch (err) {
     console.log(err);
-    const error = new HttpError("Errorsss", 500);
+    const error = new HttpError("Lỗi", 500);
     return next(error);
   }
 
@@ -262,12 +262,12 @@ const deleteProduct = async (req, res, next) => {
   try {
     product = await Product.findById(productId).populate("creator");
   } catch (error) {
-    const err = new HttpError("cant delete", 500);
+    const err = new HttpError("Bạn không thể xoá sản phẩm này", 500);
     return next(err);
   }
 
   if (!product) {
-    const err = new HttpError("could not find place for this id", 404);
+    const err = new HttpError("Không kiếm thấy sản phẩm theo thành viên này", 404);
     return next(err);
   }
 
@@ -281,20 +281,20 @@ const deleteProduct = async (req, res, next) => {
     await product.creator.save({ session: sess });
     await sess.commitTransaction();
   } catch (error) {
-    const err = new HttpError("Something went wrong! pls try later", 500);
+    const err = new HttpError("Lỗi", 500);
     return next(err);
   }
 
   fs.unlink(imagePath, (err) => {
     console.log(err);
   });
-  res.status(500).json({ msg: "Deleted" });
+  res.status(500).json({ msg: "Đã xoá" });
 };
 
 const like = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    throw new HttpError("Invalid inputs passed, please check your data.", 422);
+    throw new HttpError("Dữ liệu đầu vào không hợp lệ. Vui lòng kiểm tra lại", 422);
   }
 
   const productId = req.params.pid;
@@ -307,7 +307,7 @@ const like = async (req, res, next) => {
     product = await Product.findById(productId);
     user = await User.findById(userId);
   } catch (error) {
-    const err = new HttpError("Something went wrong!!", 500);
+    const err = new HttpError("Lỗi", 500);
     return next(err);
   }
 
@@ -330,7 +330,7 @@ const like = async (req, res, next) => {
     await sess.commitTransaction();
   } catch (err) {
     console.log(err);
-    const error = new HttpError("Errorsss", 500);
+    const error = new HttpError("Lỗi", 500);
     return next(error);
   }
 
@@ -348,12 +348,12 @@ const removeLike = async (req, res, next) => {
     product = await Product.findById(productId).populate("likes");
     user = await User.findById(userId);
   } catch (error) {
-    const err = new HttpError("cant delete", 500);
+    const err = new HttpError("Bạn không thể xoá lượt thích này", 500);
     return next(err);
   }
 
   if (!product) {
-    const err = new HttpError("could not find place for this id", 404);
+    const err = new HttpError("Không thể kiếm thấy sản phẩm theo thành viên này", 404);
     return next(err);
   }
 
@@ -367,10 +367,10 @@ const removeLike = async (req, res, next) => {
     await sess.commitTransaction();
   } catch (error) {
     console.log(error)
-    const err = new HttpError("Something went wrong! pls try later", 500);
+    const err = new HttpError("Lỗi", 500);
     return next(err);
   }
-  res.status(500).json({ msg: "Deleted" });
+  res.status(500).json({ msg: "Đã xoá" });
 };
 
 const views = async (req, res, next) => {
@@ -379,7 +379,7 @@ const views = async (req, res, next) => {
   try {
     product = await Product.findById(productId);
   } catch (error) {
-    const err = new HttpError("Faild", 500);
+    const err = new HttpError("Thất bại", 500);
     return next(err);
   }
 
@@ -387,7 +387,7 @@ const views = async (req, res, next) => {
   try {
     await product.save();
   } catch (error) {
-    const err = new HttpError("u could not update", 500);
+    const err = new HttpError("Bạn không thể cập nhật sản phẩm này", 500);
     return next(err);
   }
 

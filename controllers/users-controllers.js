@@ -12,7 +12,7 @@ const getUsers =  async (req, res, next) => {
   try {
     user = await User.find({}, '-password')
   } catch (error) {
-    const err = new HttpError('Fetching users faild!',500);
+    const err = new HttpError('Tải dữ liệu thành viên thất bại',500);
     return next(err);
   }
 
@@ -24,7 +24,7 @@ const signup = async (req, res, next) => {
   if (!errors.isEmpty()) {
 
     return next(
-      new HttpError('Invalid inputs passed, please check your data.', 422)
+      new HttpError('Dữ liệu đầu vào không hợp lệ. Vui lòng kiểm tra lại', 422)
     ) ;
   }
   const { name, email, password } = req.body;
@@ -33,12 +33,12 @@ const signup = async (req, res, next) => {
 try {
    existingUser = await User.findOne({email: email})
 } catch (error) {
-  const err = new HttpError('Signing up faild',500);
+  const err = new HttpError('Đăng kí thất bại',500);
   return next(err);
 }
   
 if(existingUser){
-  const err = new HttpError('User aldready exist, Try login instead',422);
+  const err = new HttpError('Thành viên này đã tồn tại. Vui lòng đăng nhập',422);
   return next(err);
 }
 
@@ -53,7 +53,7 @@ if(existingUser){
   try {
     await createdUser.save();
   } catch (error) {
-    const err= new HttpError('Signing up faild. Pls try again', 500);
+    const err= new HttpError('Đăng kí thất bại. Vui lòng thử lại', 500);
     return next(err);
   }
 
@@ -67,17 +67,17 @@ const login = async (req, res, next) => {
   try {
     existingUser = await User.findOne({email: email})
   } catch (error) {
-    const err = new HttpError('Signing up faild',500);
+    const err = new HttpError('Đăng nhập thất bại',500);
     return next(err);
   }
 
   if(!existingUser || existingUser.password !== password)
   {
-      const err = new HttpError('Log in faild. Pls try again', 500);
+      const err = new HttpError('Đăng nhập thất bại. Vui lòng thử lại sau', 500);
       return next(err);
   }
 
-  res.json({message: 'Logged in!', user: existingUser.toObject({getters:true})});
+  res.json({message: 'Đã đăng nhập', user: existingUser.toObject({getters:true})});
 };
 
 
@@ -86,7 +86,7 @@ const update = async (req, res, next) => {
   if (!errors.isEmpty()) {
 
     return next(
-      new HttpError('Error, please try again.', 422)
+      new HttpError('Lỗi', 422)
     ) ;
   }
   const { name, email, password, role } = req.body;
@@ -96,7 +96,7 @@ const update = async (req, res, next) => {
 try {
    update = await User.findById(userId);
 } catch (error) {
-  const err = new HttpError('Something went wrong',500);
+  const err = new HttpError('Lỗi',500);
   return next(err);
 }
 
@@ -108,7 +108,7 @@ update.role = role;
   try {
     await update.save();
   } catch (error) {
-    const err= new HttpError(' update faild. Pls try again', 500);
+    const err= new HttpError('Cập nhật thành viên không thành công, Vui lòng thử lại', 500);
     return next(err);
   }
 
@@ -123,7 +123,7 @@ const getUserById = async (req, res, next) => {
     user = await User.findById(userId);
   } catch (err) {
     const error = new HttpError(
-      'Something went wrong, could not find a User.',
+      'Lỗi. Không thể tìm thấy thành viên này',
       500
     );
     return next(error);
@@ -131,7 +131,7 @@ const getUserById = async (req, res, next) => {
 
   if (!user) {
     const error = new HttpError(
-      'Could not find user for the provided id.',
+      'Lỗi. Không thể tìm kiếm thành viên này',
       404
     );
     return next(error);
@@ -148,12 +148,12 @@ const deleteUser = async (req, res, next) => {
     user = await User.findById(userId).populate('products');
     console.log(user)
   } catch (error) {
-    const err= new HttpError('cant delete', 500);
+    const err= new HttpError('Bạn không thể xoá thành viên này', 500);
     return next(err);
   }
 
   if(!user) {
-    const err= new HttpError('could not find user for this id', 404);
+    const err= new HttpError('Không kiếm thấy thành viên này', 404);
     return next(err);
   }
   const imagePath = user.image;
@@ -165,14 +165,14 @@ const deleteUser = async (req, res, next) => {
     await  sess.commitTransaction()
 
   } catch (error) {
-    const err = new HttpError('Something went wrong! pls try later', 500);
+    const err = new HttpError('Lỗi', 500);
     return next(err);
   }
 
   fs.unlink(imagePath, err => {
     console.log(err)
   });
-  res.status(500).json({msg:'Deleted'})
+  res.status(500).json({msg:'Đã xoá'})
 };
 
 
